@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { fetchLogin } from '../stores/authReducer';
+import { useDispatch } from 'react-redux';
 import Copyright from '../components/ui/Copyright';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import TextField from '@material-ui/core/TextField';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Checkbox from '@material-ui/core/Checkbox';
 import Box from '@material-ui/core/Box';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-
+import * as yup from 'yup';
 const useStyles = makeStyles((theme) => ({
   paper: {
     marginTop: theme.spacing(8),
@@ -33,21 +34,25 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Login = () => {
-  const [form, setForm] = useState({
-    user: '',
-    password: '',
+  const dispath = useDispatch();
+  const loginSchema = yup.object().shape({
+    user: yup.string().required(),
+    password: yup.string().required(),
   });
-  const { user, password } = form;
+  const { register, handleSubmit, errors } = useForm({
+    validationSchema: loginSchema,
+  });
+
   const classes = useStyles();
-  const handleChange = ({ target }) => {
-    setForm({
-      ...form,
-      [target.name]: target.value,
-    });
-    console.log(form);
+  const onSubmit = async (data) => {
+    try {
+      await dispath(fetchLogin(data));
+    } catch (error) {
+      console.log(error);
+    }
   };
   return (
-    <Container component='main' maxWidth='xs'>
+    <Container component='main' maxWidth='xs' onSubmit={handleSubmit(onSubmit)}>
       <CssBaseline />
       <div className={classes.paper}>
         <Avatar className={classes.avatar}>
@@ -58,33 +63,32 @@ const Login = () => {
         </Typography>
         <form className={classes.form} noValidate>
           <TextField
-            onChange={handleChange}
-            variant='outlined'
-            margin='normal'
-            value={user}
-            required
-            fullWidth
-            id='user'
-            label='user'
             name='user'
-            autoFocus
-          />
-          <TextField
-            onChange={handleChange}
-            variant='outlined'
+            inputRef={register({
+              required: true,
+              minLength: 1,
+            })}
+            label='Intodusca su usuario'
+            className={classes.textField}
             margin='normal'
-            required
+            variant='outlined'
             fullWidth
-            value={password}
-            name='password'
-            label='Password'
-            type='password'
-            id='password'
-            autoComplete='current-password'
+            error={errors.user ? true : false}
           />
-          <FormControlLabel
-            control={<Checkbox value='remember' color='primary' />}
-            label='Remember me'
+
+          <TextField
+            name='password'
+            type='password'
+            inputRef={register({
+              required: true,
+              minLength: 1,
+            })}
+            label='Intodusca su contrasenia'
+            className={classes.textField}
+            margin='normal'
+            variant='outlined'
+            fullWidth
+            error={errors.password ? true : false}
           />
           <Button
             type='submit'

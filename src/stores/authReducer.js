@@ -10,6 +10,9 @@ export const SECOND_FORM = 'SECOND_FORM';
 export const CREATE_USER_START = 'CREATE_USER_START';
 export const CREATE_USER_SUCCES = 'CREATE_USER_SUCCES';
 export const CREATE_USER_FAILED = 'CREATE_USER_FAILED';
+export const UPDATE_USER_START = 'UPDATE_USER_START';
+export const UPDATE_USER_SUCCES = 'UPDATE_USER_SUCCES';
+export const UPDATE_USER_FAILED = 'UPDATE_USER_FAILED';
 export const LOGOUT = 'LOGOUT';
 //initialState
 const initialState = {
@@ -32,16 +35,18 @@ export default function userReducer(state = initialState, { type, payload }) {
       return { ...state, loading: false, ...payload };
     case ISLOGGED_SUCCES:
       return { isLogged: true, loading: false, ...payload };
-    case FIRST_FORM:
-      return { ...state, nuevoUsuario: payload };
-    case SECOND_FORM:
-      return { ...state, nuevoUsuario: { ...state.nuevoUsuario, ...payload } };
     case CREATE_USER_START:
       return { loading: true, error: null, isLogged: false };
     case CREATE_USER_FAILED:
       return { ...state, loading: false, ...payload };
     case CREATE_USER_SUCCES:
       return { isLogged: true, loading: false, ...payload };
+    case UPDATE_USER_START:
+      return { ...state, loading: true, error: null };
+    case UPDATE_USER_FAILED:
+      return { ...state, loading: false, ...payload };
+    case UPDATE_USER_SUCCES:
+      return { ...state, loading: false, ...payload };
     case LOGOUT:
       return { isLogged: false, loading: false };
     default:
@@ -104,12 +109,25 @@ export const logout = () => ({
   type: LOGOUT,
 });
 
+export const updateUserStart = () => ({
+  type: UPDATE_USER_START,
+});
+
+export const updateUserFailed = (payload) => ({
+  type: UPDATE_USER_FAILED,
+  payload,
+});
+
+export const updateUserSucces = (payload) => ({
+  type: UPDATE_USER_SUCCES,
+  payload,
+});
+
 //Thunks peticiones asincronas
 /**
- * @param {string} usuario email del usuario
- * @param {string} contrasena password del usuario
+ * @param {Object} userInfo email del usuario
  */
-export const fetchLogin = (usuario, contrasena) => async (
+export const fetchLogin = (userInfo) => async (
   dispatch,
   getState,
   { axios }
@@ -117,15 +135,15 @@ export const fetchLogin = (usuario, contrasena) => async (
   dispatch(loginStart());
   try {
     const {
-      data: { data, token },
-    } = await axios.post('/auth/inicia_sesion', {
-      usuario,
-      contrasena,
+      data: { user, token },
+    } = await axios.post('/api/login', {
+      ...userInfo,
     });
+    console.log(user, token);
 
     window.localStorage.setItem('villasToken', token);
 
-    dispatch(loginSucces({ data }));
+    dispatch(loginSucces({ ...user }));
   } catch (error) {
     const { response } = error;
     const { request, ...errorObject } = response;
@@ -174,5 +192,21 @@ export const createUser = () => async (dispatch, getState, { axios }) => {
     const { request, ...errorObject } = response;
     const { data } = errorObject;
     dispatch(crateUserFailed({ error: data }));
+  }
+};
+export const EditUser = (userInfo) => async (dispatch, getState, { axios }) => {
+  dispatch(updateUserStart());
+  console.log(userInfo);
+  try {
+    const {
+      data: { user },
+    } = await axios.post('/api/user-update', { ...userInfo });
+
+    dispatch(updateUserSucces({ ...user }));
+  } catch (error) {
+    const { response } = error;
+    const { request, ...errorObject } = response;
+    const { data } = errorObject;
+    dispatch(updateUserFailed({ error: data }));
   }
 };

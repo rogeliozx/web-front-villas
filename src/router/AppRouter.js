@@ -8,11 +8,11 @@ import PrivateRoute from './PrivateRoute';
 
 const AppRouter = () => {
   const dispatch = useDispatch();
-  const { isLogged, _id } = useSelector((state) => state.auth);
+  const { loading, _id } = useSelector((state) => state.auth);
 
   useEffect(() => {}, [dispatch]);
 
-  if (isLogged) {
+  if (loading) {
     return <h5>Espere...</h5>;
   }
 
@@ -28,13 +28,12 @@ const AppRouter = () => {
           />
 
           <PrivateRoute
-            exact
-            path='/'
+            path='/Dashboard'
             component={Dashboard}
             isAuthenticated={!!_id}
           />
 
-          <Redirect to='/' />
+          <Redirect to='/login' />
         </Switch>
       </div>
     </Router>
