@@ -15,6 +15,9 @@ const useStyles = makeStyles({
     height: 140,
     backgroundSize: 'contain',
   },
+  name: {
+    textAlign: 'center',
+  },
 });
 
 const CardPhoto = ({ styles, picture = avatar, name = '' }) => {
@@ -29,7 +32,11 @@ const CardPhoto = ({ styles, picture = avatar, name = '' }) => {
           title='Foto perfil'
         />
         <CardContent>
-          <Typography gutterBottom variant='h5' component='h2'>
+          <Typography
+            gutterBottom
+            variant='h5'
+            component='h2'
+            className={classes.name}>
             {name}
           </Typography>
         </CardContent>

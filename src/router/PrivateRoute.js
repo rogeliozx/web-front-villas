@@ -1,9 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import Dashboard from '../views/Dashboard';
+import AdminDashboard from '../views/AdminDashboard';
 import { Route, Redirect } from 'react-router-dom';
 
-const PrivateRoute = ({ isAuthenticated, component: Component, ...rest }) => {
+const PrivateRoute = ({ isAuthenticated, rol, ...rest }) => {
+  let Component;
+  if (rol === 'ADMIN') {
+    Component = AdminDashboard;
+  } else {
+    Component = Dashboard;
+  }
   return (
     <Route
       {...rest}

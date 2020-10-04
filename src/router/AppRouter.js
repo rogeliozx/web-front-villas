@@ -2,13 +2,12 @@ import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Switch, Redirect } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Login from '../views/Login';
-import Dashboard from '../views/Dashboard';
 import PublicRoute from './PublicRoute';
 import PrivateRoute from './PrivateRoute';
 
 const AppRouter = () => {
   const dispatch = useDispatch();
-  const { loading, _id } = useSelector((state) => state.auth);
+  const { loading, _id, rol = 'USER' } = useSelector((state) => state.auth);
 
   useEffect(() => {}, [dispatch]);
 
@@ -26,13 +25,7 @@ const AppRouter = () => {
             component={Login}
             isAuthenticated={!!_id}
           />
-
-          <PrivateRoute
-            path='/Dashboard'
-            component={Dashboard}
-            isAuthenticated={!!_id}
-          />
-
+          <PrivateRoute path='/Dashboard' isAuthenticated={!!_id} rol={rol} />
           <Redirect to='/login' />
         </Switch>
       </div>

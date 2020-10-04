@@ -13,7 +13,7 @@ import * as yup from 'yup';
 
 const useStyles = makeStyles({
   root: {
-    height: '17rem',
+    height: '32rem',
     maxWidth: '40rem',
     position: 'relative',
     left: '40vw',
@@ -23,16 +23,22 @@ const useStyles = makeStyles({
 });
 
 const FormEditInfo = ({
+  name = '',
+  email = '',
   code = '',
   tastk = '',
+  guests = '',
   _id = '',
   handleClose = () => {},
 }) => {
   const dispath = useDispatch();
   const classes = useStyles();
   const loginSchema = yup.object().shape({
+    name: yup.string().required(),
+    email: yup.string().email().required(),
     tastk: yup.string().required(),
     code: yup.string().required(),
+    guest: yup.string().required(),
   });
   const { register, handleSubmit, errors } = useForm({
     validationSchema: loginSchema,
@@ -48,41 +54,86 @@ const FormEditInfo = ({
   return (
     <Card className={classes.root}>
       <form noValidate onSubmit={handleSubmit(onSubmit)}>
-        <CardActionArea>
-          <CardContent>
-            <TextField
-              name='code'
-              type='text'
-              inputRef={register({
-                required: true,
-                minLength: 1,
-              })}
-              label='Codigo visitas'
-              className={classes.textField}
-              margin='normal'
-              variant='outlined'
-              defaultValue={code}
-              fullWidth
-              error={errors.code ? true : false}
-            />
+        <CardContent>
+          <TextField
+            name='name'
+            type='text'
+            inputRef={register({
+              required: true,
+              minLength: 1,
+            })}
+            label='El nombre del usuario'
+            className={classes.textField}
+            margin='normal'
+            variant='outlined'
+            defaultValue={name}
+            fullWidth
+            error={errors.name ? true : false}
+          />
+          <TextField
+            name='email'
+            type='text'
+            inputRef={register({
+              required: true,
+              minLength: 1,
+            })}
+            label='El email su cuenta'
+            className={classes.textField}
+            margin='normal'
+            variant='outlined'
+            defaultValue={email}
+            fullWidth
+            error={errors.email ? true : false}
+          />
+          <TextField
+            name='code'
+            type='text'
+            inputRef={register({
+              required: true,
+              minLength: 1,
+            })}
+            label='Codigo visitas'
+            className={classes.textField}
+            margin='normal'
+            variant='outlined'
+            defaultValue={code}
+            fullWidth
+            error={errors.code ? true : false}
+          />
 
-            <TextField
-              name='tastk'
-              type='text'
-              inputRef={register({
-                required: true,
-                minLength: 1,
-              })}
-              label='Intodusca su contrasenia'
-              className={classes.textField}
-              margin='normal'
-              variant='outlined'
-              defaultValue={tastk}
-              fullWidth
-              error={errors.tastk ? true : false}
-            />
-          </CardContent>
-        </CardActionArea>
+          <TextField
+            name='tastk'
+            type='text'
+            inputRef={register({
+              required: true,
+              minLength: 1,
+            })}
+            label='Intodusca su consigna'
+            className={classes.textField}
+            margin='normal'
+            variant='outlined'
+            defaultValue={tastk}
+            fullWidth
+            error={errors.tastk ? true : false}
+          />
+          <TextField
+            name='guests'
+            type='text'
+            multiline
+            rows={2}
+            rowsMax={4}
+            inputRef={register({
+              minLength: 1,
+            })}
+            label='Lista Visitantes'
+            className={classes.textField}
+            margin='normal'
+            variant='outlined'
+            defaultValue={guests}
+            fullWidth
+            error={errors.guests ? true : false}
+          />
+        </CardContent>
         <CardActions>
           <Button
             size='small'

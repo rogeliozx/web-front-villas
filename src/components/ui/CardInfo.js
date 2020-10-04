@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
 
 const CardInfo = ({ styles = {}, user = {}, Component }) => {
   const {
+    rol = '',
     email = '',
     phone = '',
     tastk = '',
@@ -99,9 +100,11 @@ const CardInfo = ({ styles = {}, user = {}, Component }) => {
         <ListItemText primary='Visitas' secondary={guests} />
       </ListItem>
       <ListItem style={{ justifyContent: 'center' }}>
-        <Button variant='contained' color='primary' onClick={handleOpen}>
-          Editar
-        </Button>
+        {rol === 'ADMIN' ? null : (
+          <Button variant='contained' color='primary' onClick={handleOpen}>
+            Editar
+          </Button>
+        )}
       </ListItem>
       <Modal
         open={open}
